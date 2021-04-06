@@ -1,0 +1,30 @@
+cabal-version:       >=1.10
+name:                alpaca-deterministic-fixed
+version:             0.1.0.0
+synopsis:            A deterministic fixed point type with a Floating instance
+description:
+  This aims to provide a deterministic replacement for @Float@/@Double@ with
+  slower but comparable performance. Being a fixed point rather than floating
+  point representation means potentially less accuracy and more under/overflow.
+  A deterministic @Floating@ instance is also provided, allowing e.g. @sqrt@ and
+  standard triganomic functions. This uses an @Int64@ representation under the
+  hood.
+
+  Determinism is NOT guaranteed between different versions of this library nor
+  any dependencies.
+
+license-file:        LICENSE
+author:              David Eichmann
+maintainer:          EichmannD@gmail.com
+copyright:           David Eichmann 2021
+category:            Math, numerical, Game Engine
+build-type:          Simple
+extra-source-files:  CHANGELOG.md
+
+library
+  exposed-modules:   Data.F
+  hs-source-dirs:    src
+  build-depends:
+      base
+    , integer-roots
+  default-language:  Haskell2010
