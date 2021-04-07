@@ -1,3 +1,4 @@
+{-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
 import Data.F
@@ -17,8 +18,21 @@ instance Arbitrary F where
 infix 4 ~=
 
 
-(~=) :: F -> F -> Bool
-a ~= b = abs (a - b) < 0.00001
+(~=) :: (Num a, Ord a, Fractional a) => a -> a -> Bool
+(~=) = approxEq 0.00001
+
+
+approxEq :: (Num a, Ord a, Fractional a) => a -> a -> a -> Bool
+approxEq tolerance a b = abs (a - b) < tolerance
+
+
+-- | Check that a funciton gives similar results for F and for Double
+vsDouble :: F -> (forall a. Floating a => a -> a) -> F -> Bool
+vsDouble tolerance fn f =
+  approxEq
+    (realToFrac tolerance)
+    (realToFrac (fn f))
+    (fn (realToFrac f :: Double))
 
 
 tests :: TestTree
@@ -40,6 +54,9 @@ tests =
               && ((mod x y == 0) || (abs (mod x y) < abs y))
         )
     , testProperty
-        "sin^2 + cos^2 ~= 1"
-        (\(x :: F) -> (sin x ^ 2) + (cos x ^ 2) ~= 1)
+        "sin"
+        (\(x :: F) -> vsDouble 0.0001 sin x)
+    , testProperty
+        "cos"
+        (\(x :: F) -> vsDouble 0.0001 cos x)
     ]

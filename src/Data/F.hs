@@ -5,6 +5,7 @@
 module Data.F (
   F (..),
   tau,
+  cos'Interp,
 ) where
 
 import Data.Bits
@@ -137,32 +138,15 @@ instance Floating F where
     | otherwise = F (shiftL (integerSquareRoot x) denominatorExpHalf)
 
 
-  -- Taylor series
   pi = 3.1415926535897932384626433832795028841971693993751058209749445923
-  cos x = sin (x + (halfF pi))
-  sin x' = sin' (mod x' (pi + pi))
+  cos x'
+    | x < halfF pi = cos'Interp x
+    | x < pi = negate (cos'Interp (pi - x))
+    | x < pi + halfF pi = negate (cos'Interp (x - pi))
+    | otherwise = cos'Interp ((2 * pi) - x)
    where
-    -- 0 <= x <= 2 pi
-    sin' x
-      | x < halfF pi = sin'' x
-      | x < pi = sin'' (pi - x)
-      | x < halfF (pi + pi + pi) = negate (sin'' (x - pi))
-      | otherwise = negate (sin'' (pi + pi - x))
-
-    -- -pi / 2 <= x <= -pi / 2
-    -- TODO let's interpolate between taylor expansion at 0 and at pi/2
-    sin'' x =
-      x
-        - (x3 / 6)
-        + (x5 / 120)
-        - (x7 / 5040)
-        + (x9 / 362880)
-     where
-      x2 = x * x
-      x3 = x2 * x
-      x5 = x2 * x3
-      x7 = x2 * x5
-      x9 = x2 * x7
+    x = clap2pi x'
+  sin x = cos (x - halfF pi)
 
 
   asin = error "TODO implement asin for F"
@@ -181,6 +165,54 @@ instance Floating F where
 
   exp = error "TODO implement exp for F"
   log = error "TODO implement log for F"
+
+
+-- | mod to within @0 <= x < 2pi@. Note that `rem` with large multiples of
+-- pi first, avoids some round errors when x is large.
+clap2pi :: F -> F
+clap2pi x =
+  mod
+    ( rem
+        (rem x (3141592.6535897932384626433832795028841971693993751058209749445923))
+        3141.5926535897932384626433832795028841971693993751058209749445923
+    )
+    (pi + pi)
+
+
+-- | cos(x) for 0 <= x <= pi/2.
+-- interpoplates between sin and cos taylor series
+cos'Interp :: F -> F
+cos'Interp x =
+  let a = x / halfF pi
+   in ((1 - a) * cos'T x)
+        + (a * sin'T (halfF pi - x))
+
+
+-- | sin taylor series
+sin'T :: F -> F
+sin'T x =
+  x
+    - (x3 / 6)
+    + (x5 / 120)
+    - (x7 / 5040)
+ where
+  x2 = x * x
+  x3 = x2 * x
+  x5 = x2 * x3
+  x7 = x2 * x5
+
+
+-- | cos taylor series
+cos'T :: F -> F
+cos'T x =
+  1
+    - (halfF x2)
+    + (x4 / 24)
+    - (x6 / 720)
+ where
+  x2 = x * x
+  x4 = x2 * x2
+  x6 = x2 * x4
 
 
 -- TODO RealFloat
