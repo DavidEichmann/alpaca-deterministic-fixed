@@ -23,14 +23,14 @@ infix 4 ~=
 
 
 approxEq :: (Num a, Ord a, Fractional a) => a -> a -> a -> Bool
-approxEq tolerance a b = abs (a - b) < tolerance
+approxEq relativeTolerance actual expected = abs (actual - expected) < max 0.000001 (relativeTolerance * abs expected)
 
 
 -- | Check that a funciton gives similar results for F and for Double
 vsDouble :: F -> (forall a. Floating a => a -> a) -> F -> Bool
-vsDouble tolerance fn f =
+vsDouble relativeTolerance fn f =
   approxEq
-    (realToFrac tolerance)
+    (realToFrac relativeTolerance)
     (realToFrac (fn f))
     (fn (realToFrac f :: Double))
 
@@ -55,8 +55,11 @@ tests =
         )
     , testProperty
         "sin"
-        (\(x :: F) -> vsDouble 0.0001 sin x)
+        (\(x :: F) -> vsDouble 0.01 sin x)
     , testProperty
         "cos"
-        (\(x :: F) -> vsDouble 0.0001 cos x)
+        (\(x :: F) -> vsDouble 0.01 cos x)
+    , testProperty
+        "tan"
+        (\(x :: F) -> vsDouble 0.01 tan x)
     ]
