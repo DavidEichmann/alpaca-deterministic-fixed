@@ -170,3 +170,17 @@ instance Floating F where
   asinh = error "TODO implement asinh for F"
   acosh = error "TODO implement acosh for F"
   atanh = error "TODO implement atanh for F"
+
+
+-- TODO RealFloat
+instance RealFloat F where
+  floatRadix = error "TODO implement floatRadix for F"
+  floatDigits = error "TODO implement floatDigits for F"
+  floatRange = error "TODO implement floatRange for F"
+  decodeFloat = error "TODO implement decodeFloat for F"
+  encodeFloat = error "TODO implement encodeFloat for F"
+  isNaN = error "TODO implement isNaN for F"
+  isInfinite = error "TODO implement isInfinite for F"
+  isDenormalized = error "TODO implement isDenormalized for F"
+  isNegativeZero = error "TODO implement isNegativeZero for F"
+  isIEEE = error "TODO implement isIEEE for F"
