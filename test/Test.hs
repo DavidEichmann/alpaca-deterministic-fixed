@@ -12,7 +12,7 @@ main = defaultMain tests
 
 
 instance Arbitrary F where
-  arbitrary = F . fromIntegral <$> arbitrary @Int32
+  arbitrary = F <$> arbitrary
 
 
 tests :: TestTree
