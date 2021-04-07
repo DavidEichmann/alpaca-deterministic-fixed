@@ -127,8 +127,8 @@ tau :: F
 tau = pi + pi
 
 
-halff :: F -> F
-halff f = shiftR f 1
+halfF :: F -> F
+halfF f = shiftR f 1
 
 
 instance Floating F where
@@ -145,9 +145,9 @@ instance Floating F where
    where
     -- 0 <= x <= 2 pi
     sin' x
-      | x < pi / 2 = sin'' x
+      | x < halfF pi = sin'' x
       | x < pi = sin'' (pi - x)
-      | x < (pi + pi + pi) / 2 = negate (sin'' (x - pi))
+      | x < halfF (pi + pi + pi) = negate (sin'' (x - pi))
       | otherwise = negate (sin'' (pi + pi - x))
 
     -- -pi / 2 <= x <= -pi / 2
@@ -168,7 +168,7 @@ instance Floating F where
 
   exp = error "TODO implement exp for F"
   log = error "TODO implement log for F"
-  cos x = sin (x + (halff pi))
+  cos x = sin (x + (halfF pi))
   asin = error "TODO implement asin for F"
   acos = error "TODO implement acos for F"
   atan = error "TODO implement atan for F"
