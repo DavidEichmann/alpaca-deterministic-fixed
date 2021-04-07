@@ -112,8 +112,15 @@ instance Show F where
 instance Integral F where
   mod (F a) (F b) = F (mod a b)
   rem (F a) (F b) = F (rem a b)
-  quotRem = error "TODO implement quotRem for F"
-  toInteger = error "TODO implement toInteger for F"
+  quotRem (F a) (F b) =
+    let (q', r) = quotRem a b
+        q = shiftL q' denominatorExp
+     in (F q, F r)
+  divMod (F a) (F b) =
+    let (q', r) = divMod a b
+        q = shiftL q' denominatorExp
+     in (F q, F r)
+  toInteger = round
 
 
 tau :: F
