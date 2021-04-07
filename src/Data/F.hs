@@ -137,10 +137,9 @@ instance Floating F where
     | otherwise = F (shiftL (integerSquareRoot x) denominatorExpHalf)
 
 
-  pi = 3.1415926535897932384626433832795028841971693993751058209749445923
-
-
   -- Taylor series
+  pi = 3.1415926535897932384626433832795028841971693993751058209749445923
+  cos x = sin (x + (halfF pi))
   sin x' = sin' (mod x' (pi + pi))
    where
     -- 0 <= x <= 2 pi
@@ -166,17 +165,22 @@ instance Floating F where
       x9 = x2 * x7
 
 
-  exp = error "TODO implement exp for F"
-  log = error "TODO implement log for F"
-  cos x = sin (x + (halfF pi))
   asin = error "TODO implement asin for F"
   acos = error "TODO implement acos for F"
   atan = error "TODO implement atan for F"
+
+
   sinh = error "TODO implement sinh for F"
   cosh = error "TODO implement cosh for F"
+
+
   asinh = error "TODO implement asinh for F"
   acosh = error "TODO implement acosh for F"
   atanh = error "TODO implement atanh for F"
+
+
+  exp = error "TODO implement exp for F"
+  log = error "TODO implement log for F"
 
 
 -- TODO RealFloat
