@@ -82,7 +82,10 @@ instance Num F where
 
 instance Fractional F where
   recip (F a) = F (denominatorSq `div` a)
-  (F a) / (F b) = F ((shiftL a denominatorExp) `div` b) --  TODO you could also break this into integer/decimal parts in order to avoid the overflow from shiftL
+  (F a) / (F b) =
+    -- The use of divMod and shifting at the correct point is done to avoid under/overflow.
+    let (d, r) = a `divMod` b
+     in F ((shiftL d denominatorExp) + (shiftL r denominatorExp `div` b))
   fromRational r = F (floor $ r * denominatorR)
 
 
