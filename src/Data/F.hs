@@ -148,7 +148,7 @@ instance Floating F where
     | x < pi + halfF pi = negate (cos'Interp (x - pi))
     | otherwise = cos'Interp ((2 * pi) - x)
    where
-    x = clap2pi x'
+    x = clamp2pi x'
   sin x = cos (x - halfF pi)
 
 
@@ -166,14 +166,15 @@ instance Floating F where
   atanh = error "TODO implement atanh for F"
 
 
+  -- TODO see https://hydra.iohk.io/job/Cardano/cardano-ledger-specs/nonIntegerCalculations/latest/download-by-type/doc-pdf/non-integer-calculations
   exp = error "TODO implement exp for F"
   log = error "TODO implement log for F"
 
 
 -- | mod to within @0 <= x < 2pi@. Note that `rem` with large multiples of
 -- pi first, avoids some round errors when x is large.
-clap2pi :: F -> F
-clap2pi x =
+clamp2pi :: F -> F
+clamp2pi x =
   mod
     ( ( ( ( ( x
                 `rem` 31415926535.897932384626433832795028841971693993751058209749445923
