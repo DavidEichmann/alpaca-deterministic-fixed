@@ -234,13 +234,21 @@ cos'T x =
 
 -- TODO RealFloat
 instance RealFloat F where
-  floatRadix = error "TODO implement floatRadix for F"
-  floatDigits = error "TODO implement floatDigits for F"
-  floatRange = error "TODO implement floatRange for F"
-  decodeFloat = error "TODO implement decodeFloat for F"
-  encodeFloat = error "TODO implement encodeFloat for F"
-  isNaN = error "TODO implement isNaN for F"
-  isInfinite = error "TODO implement isInfinite for F"
-  isDenormalized = error "TODO implement isDenormalized for F"
-  isNegativeZero = error "TODO implement isNegativeZero for F"
-  isIEEE = error "TODO implement isIEEE for F"
+  floatRadix _ = 2
+  floatDigits _ = 64
+  floatRange _ = (1, 1)
+  decodeFloat (F x) =
+    if x == 0
+      then (0, 0)
+      else (fromIntegral x, negate denominatorExp)
+  encodeFloat m n =
+    if m == 0
+      then 0
+      else F (shiftL (fromIntegral m) (n + denominatorExp))
+  scaleFloat s (F a) = F (shiftL a s)
+  isNaN _ = False
+  isInfinite _ = False
+  isDenormalized _ = False
+  isNegativeZero _ = False
+  isIEEE _ = False
+  atan2 = error "TODO implement atan2 fo F"
