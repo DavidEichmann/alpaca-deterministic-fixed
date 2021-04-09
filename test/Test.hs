@@ -1,9 +1,11 @@
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
+import Control.Monad (forM_)
 import Data.F
 import Data.Int
 import Test.Tasty
+import Test.Tasty.HUnit
 import Test.Tasty.QuickCheck
 
 
@@ -35,6 +37,14 @@ vsDouble relativeTolerance fn f =
     (fn (realToFrac f :: Double))
 
 
+-- | Check the error compared to Double
+vsDoubleError :: (forall a. Floating a => a -> a) -> F -> Double
+vsDoubleError fn f =
+  abs $
+    (realToFrac (fn f))
+      - (fn (realToFrac f :: Double))
+
+
 tests :: TestTree
 tests =
   testGroup
@@ -53,13 +63,34 @@ tests =
               ==> (x == y * div x y + mod x y)
               && ((mod x y == 0) || (abs (mod x y) < abs y))
         )
+    , testCase
+        "sin (0..2pi)"
+        ( forM_ [0, 0.01 .. 2 * pi] $
+            \x ->
+              (vsDoubleError sin x) < 0.000001
+                @? ("sin " ++ show x ++ " = " ++ show (sin x) ++ " (expected " ++ show (sin (realToFrac x :: Double)) ++ ")")
+        )
+    , testCase
+        "cos (0..2pi)"
+        ( forM_ [0, 0.01 .. 2 * pi] $
+            \x ->
+              (vsDoubleError cos x) < 0.000001
+                @? ("cos " ++ show x ++ " = " ++ show (cos x) ++ " (expected " ++ show (cos (realToFrac x :: Double)) ++ ")")
+        )
+    , testCase
+        "tan (0..pi/2)"
+        ( forM_ [0, 0.01 .. (pi / 2) - 0.01] $
+            \x ->
+              (vsDoubleError cos x) < 0.000001
+                @? ("tan " ++ show x ++ " = " ++ show (tan x) ++ " (expected " ++ show (tan (realToFrac x :: Double)) ++ ")")
+        )
     , testProperty
         "sin"
-        (\(x :: F) -> vsDouble 0.01 sin x)
+        (\(x :: F) -> vsDouble 0.0001 sin x)
     , testProperty
         "cos"
-        (\(x :: F) -> vsDouble 0.01 cos x)
+        (\(x :: F) -> vsDouble 0.0001 cos x)
     , testProperty
         "tan"
-        (\(x :: F) -> vsDouble 0.01 tan x)
+        (\(x :: F) -> vsDouble 0.001 tan x)
     ]
