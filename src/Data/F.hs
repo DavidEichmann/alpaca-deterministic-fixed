@@ -1,6 +1,8 @@
 {-# LANGUAGE DeriveDataTypeable #-}
 {-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE DerivingStrategies #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 
 module Data.F (
   F (..),
@@ -11,13 +13,15 @@ module Data.F (
 import Data.Bits
 import Data.Data (Data)
 import qualified Data.Fixed as Fixed
-import Data.Flat (Flat)
 import Data.Int
 import Data.Ix (Ix)
 import Data.Ratio ((%))
+import Flat (Flat)
 import Foreign (Storable)
 import GHC.Generics
 import Math.NumberTheory.Roots (integerSquareRoot)
+import System.Random.Stateful (Uniform (..), UniformRange (..))
+import Test.QuickCheck (Arbitrary (..))
 import Prelude
 
 
@@ -25,6 +29,20 @@ import Prelude
 newtype F = F {numerator :: Int64}
   deriving stock (Generic, Data)
   deriving newtype (Eq, Ord, Enum, Bounded, Ix, FiniteBits, Bits, Storable, Flat)
+
+
+instance Uniform F where
+  uniformM g = F <$> uniformM g
+
+
+instance UniformRange F where
+  uniformRM (F a, F b) g = F <$> uniformRM (a, b) g
+
+
+instance Arbitrary F where
+  arbitrary = do
+    x :: Prelude.Float <- arbitrary
+    return (realToFrac x)
 
 
 denominatorExp :: Prelude.Int
