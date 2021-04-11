@@ -27,6 +27,8 @@ library
   build-depends:
       base
     , integer-roots
+    -- TODO put this under a flag
+    , flat
   default-language:  Haskell2010
 
 test-suite test

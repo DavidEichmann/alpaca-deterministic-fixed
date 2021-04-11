@@ -11,6 +11,7 @@ module Data.F (
 import Data.Bits
 import Data.Data (Data)
 import qualified Data.Fixed as Fixed
+import Data.Flat (Flat)
 import Data.Int
 import Data.Ix (Ix)
 import Data.Ratio ((%))
@@ -22,7 +23,8 @@ import Prelude
 
 -- | F x = x / denominator
 newtype F = F {numerator :: Int64}
-  deriving (Generic, Eq, Ord, Enum, Bounded, Data, Ix, FiniteBits, Bits, Storable)
+  deriving stock (Generic, Data)
+  deriving newtype (Eq, Ord, Enum, Bounded, Ix, FiniteBits, Bits, Storable, Flat)
 
 
 denominatorExp :: Prelude.Int
