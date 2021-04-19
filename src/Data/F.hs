@@ -130,7 +130,7 @@ instance RealFrac F where
 
 
 instance Show F where
-  show f = show (realToFrac f :: Fixed.Pico) -- TODO How many decimal places do we actually need?
+  show f = show (realToFrac f :: Fixed.Pico)
 
 
 instance Integral F where
@@ -252,7 +252,6 @@ cos'T x =
   x10 = x4 * x6
 
 
--- TODO RealFloat
 instance RealFloat F where
   floatRadix _ = 2
   floatDigits _ = 64
