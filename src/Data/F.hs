@@ -57,10 +57,6 @@ decimalMask :: Int64
 decimalMask = (shiftL 1 denominatorExp) - 1
 
 
-integerMask :: Int64
-integerMask = complement decimalMask
-
-
 denominator :: Int64
 denominator = 268435456 -- 2 ^ 28
 
