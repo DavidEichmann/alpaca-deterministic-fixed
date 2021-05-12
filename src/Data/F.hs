@@ -98,10 +98,13 @@ instance Num F where
 
 instance Fractional F where
   recip (F a) = F (denominatorSq `div` a)
+
+
   (F a) / (F b) =
     -- The use of divMod and shifting at the correct point is done to avoid under/overflow.
+    -- TODO can we avoid converting to Integer?
     let (d, r) = a `divMod` b
-     in F ((shiftL d denominatorExp) + (shiftL r denominatorExp `div` b))
+     in F ((shiftL d denominatorExp) + (fromInteger (shiftL (toInteger r) denominatorExp `div` toInteger b)))
   fromRational r = F (floor $ r * denominatorR)
 
 
